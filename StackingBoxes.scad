@@ -1,8 +1,8 @@
 // Stackable container
 /* [Common Dimensions] */
-ExtWidth = 110;
-ExtDepth = 110;
-ExtHeight = 88;
+ExtWidth = 50;
+ExtDepth = 50;
+ExtHeight = 50;
 /* [Tuning] */
 WallTh = 2;
 StackDepth = 10;
@@ -10,9 +10,18 @@ CornerRadii = 5;
 HexSize = 4;
 Wiggle = 0.25;
 
+/* [Logo] */
+// Add logo?
+Logo="Y"; // [Y:Yes, N:No]
+// Logo SVG
+LogoFile = "./_media/OBC.svg";
+LogoScaleDiv = 15;
+
 // ###########################################
 
 /* [Hidden] */
+
+$fn = 120;
 // Calculated Params
 BinHeight = ExtHeight - StackDepth;
 LandWidth = ExtWidth - ((WallTh + Wiggle) * 2);
@@ -53,7 +62,16 @@ module HexPattern(width, depth, height, hex_r, spacing)
          offset_y = j*dy + (i%2==0 ? 0 : dy/2);
          translate([offset_x, offset_y, 0])
             linear_extrude(height=height)
-            Hexagon(hex_r);
+               if (Logo == "Y")
+               {
+                  rotate([0,0,35])
+                     scale(hex_r / LogoScaleDiv)
+                        import(LogoFile, center = true);
+               }
+               else
+               {
+                  Hexagon(hex_r);
+               }
       }
 }
 
