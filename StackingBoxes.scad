@@ -1,18 +1,27 @@
 // Stackable container
 /* [Common Dimensions] */
-ExtWidth = 110;
-ExtDepth = 110;
-ExtHeight = 88;
+ExtWidth = 73.66;
+ExtDepth = 55.25;
+ExtHeight = 38;
 /* [Tuning] */
 WallTh = 2;
 StackDepth = 10;
 CornerRadii = 5;
-HexSize = 4;
-Wiggle = 0.25;
+HexSize = 2.5;
+Wiggle = 0.1;
+
+/* [Logo] */
+// Add logo?
+Logo="Y"; // [Y:Yes, N:No]
+// Logo SVG
+LogoFile = "./_media/OBC.svg";
+LogoScaleDiv = 15;
 
 // ###########################################
 
 /* [Hidden] */
+
+$fn = 120;
 // Calculated Params
 BinHeight = ExtHeight - StackDepth;
 LandWidth = ExtWidth - ((WallTh + Wiggle) * 2);
@@ -21,6 +30,8 @@ LandDepth = ExtDepth - ((WallTh + Wiggle) * 2);
 // Cuts
 TrapBotWidth = ExtWidth * 0.60;
 TrapTopWidth = ExtWidth * 0.70;
+TrapBotDepth = ExtDepth * 0.60;
+TrapTopDepth = ExtDepth * 0.70;
 TrapHeight = StackDepth * 0.95;
 
 // ###########################################
@@ -53,7 +64,16 @@ module HexPattern(width, depth, height, hex_r, spacing)
          offset_y = j*dy + (i%2==0 ? 0 : dy/2);
          translate([offset_x, offset_y, 0])
             linear_extrude(height=height)
-            Hexagon(hex_r);
+               if (Logo == "Y")
+               {
+                  rotate([0,0,10])
+                     scale(hex_r / LogoScaleDiv)
+                        import(LogoFile, center = true);
+               }
+               else
+               {
+                  Hexagon(hex_r);
+               }
       }
 }
 
@@ -86,12 +106,12 @@ module CutoutShape()
       translate([0, 0, 0])
          RoundedCornerBox([ExtWidth-2*WallTh, ExtDepth-2*WallTh, ExtHeight], r=CornerRadii-WallTh);
    
-   translate([WallTh*3, -StackDepth, BinHeight - StackDepth*2])
+   translate([WallTh*2, -StackDepth, BinHeight - StackDepth*2])
       rotate([270,0,0])
       // Hex pattern walls
       HexPattern(LandWidth-StackDepth, BinHeight - StackDepth*2, LandDepth + StackDepth, HexSize, WallTh);
    
-   translate([LandWidth, WallTh*4, BinHeight - StackDepth*2])
+   translate([LandWidth, WallTh*1.5, BinHeight - StackDepth*2])
       rotate([270,0,90])
       // Hex pattern walls
       HexPattern(LandDepth-StackDepth, BinHeight - StackDepth*2, LandWidth + StackDepth, HexSize, WallTh);
@@ -100,9 +120,9 @@ module CutoutShape()
 module CatchCut()
 {
    // Trim the catch to save filament
-   translate([-WallTh*3, ExtWidth-WallTh*2, BinHeight+WallTh])
+   translate([-WallTh*4, ExtDepth-WallTh*2, BinHeight+WallTh])
       rotate([90,0,0])
-         linear_extrude(height=ExtWidth*1.1)
+         linear_extrude(height=ExtDepth*1.1)
             polygon([
                [ (ExtWidth-TrapBotWidth)/2, 0],
                [ (ExtWidth+TrapBotWidth)/2, 0],
@@ -110,14 +130,14 @@ module CatchCut()
                [ (ExtWidth-TrapTopWidth)/2, TrapHeight]
             ]);
    
-   translate([-WallTh*4, -WallTh*3, BinHeight+WallTh])
+   translate([-WallTh*4, -WallTh*3.5, BinHeight+WallTh])
       rotate([90,0,90])
          linear_extrude(height=ExtWidth*1.1)
             polygon([
-               [ (ExtWidth-TrapBotWidth)/2, 0],
-               [ (ExtWidth+TrapBotWidth)/2, 0],
-               [ (ExtWidth+TrapTopWidth)/2, TrapHeight],
-               [ (ExtWidth-TrapTopWidth)/2, TrapHeight]
+               [ (ExtDepth-TrapBotDepth)/2, 0],
+               [ (ExtDepth+TrapBotDepth)/2, 0],
+               [ (ExtDepth+TrapTopDepth)/2, TrapHeight],
+               [ (ExtDepth-TrapTopDepth)/2, TrapHeight]
             ]);
 }
 
