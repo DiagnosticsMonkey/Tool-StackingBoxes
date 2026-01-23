@@ -2,12 +2,12 @@
 /* [Common Dimensions] */
 ExtWidth = 230;
 ExtDepth = 230;
-ExtHeight = 50;
+ExtHeight = 80;
 /* [Tuning] */
 WallTh = 2;
 StackDepth = 10;
 CornerRadii = 5;
-HexSize = 2;
+HexSize = 3;
 Wiggle = 0.1;
 
 /* [Logo] */
@@ -20,7 +20,7 @@ LogoScaleDiv = 15;
 // ###########################################
 
 // Render selection
-RenderMode = "Both"; // [Bin, Divider, Both]
+RenderMode = "Both"; // [Bin, Divider, Both, Lid, All]
 
 // ###########################################
 
@@ -201,6 +201,26 @@ module Dividers()
       cube([dividerTh, rowHeight, BinHeight]);
 }
 
+module Lid()
+{
+   difference()
+   {
+      // Lid body
+      RoundedCornerBox([LandWidth, LandDepth, WallTh], CornerRadii);
+
+      // Logo cut
+      #translate([-WallTh*2 + LandWidth/2, -WallTh*2 + LandDepth/2, 0])
+         linear_extrude(height=WallTh)
+            scale(5)
+               import(LogoFile, center = true);
+      
+      translate([-WallTh + LandWidth/2,WallTh * 3,0])
+         cylinder(r=WallTh*4, h=WallTh*2);
+      translate([-WallTh + LandWidth/2,WallTh + LandDepth -WallTh*10,0])
+         cylinder(r=WallTh*4, h=WallTh*2);
+   }
+}
+
 module Bin()
 {
 difference()
@@ -220,9 +240,22 @@ else if (RenderMode == "Divider")
 {
    Dividers();
 }
+else if (RenderMode == "Lid")
+{
+   Lid();
+}
 else if (RenderMode == "Both")
 {
    Bin();
    translate([-WallTh*1.5, -WallTh*1.5, 0])
       Dividers();
 }
+else if (RenderMode == "All")
+{
+   Bin();
+   translate([-WallTh*1.5, -WallTh*1.5, 0])
+      Dividers();
+   translate([0, 0, BinHeight])
+      Lid();
+}
+

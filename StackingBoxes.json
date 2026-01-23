@@ -14,6 +14,20 @@
             "StackDepth": "10",
             "WallTh": "2",
             "Wiggle": "0.10000000000000001"
+        },
+        "New set 2": {
+            "CornerRadii": "5",
+            "ExtDepth": "230",
+            "ExtHeight": "50",
+            "ExtWidth": "230",
+            "HexSize": "2",
+            "Logo": "N",
+            "LogoFile": ".\/_media\/OBC.svg",
+            "LogoScaleDiv": "15",
+            "RenderMode": "Bin",
+            "StackDepth": "10",
+            "WallTh": "2",
+            "Wiggle": "0.10000000000000001"
         }
     }
 }
